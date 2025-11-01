@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Settings</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #111827;
+      --muted: #94a3b8;
+      --text: #e5e7eb;
+      --primary: #22c55e;
+      --accent: #38bdf8;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --border: #1f2937;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, "Noto Sans"; background: var(--bg); color: var(--text); }
+    .layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+    .sidebar { background: #0b1220; border-right: 1px solid var(--border); padding: 20px 12px; position: sticky; top: 0; height: 100vh; }
+    .logo { display:flex; align-items:center; gap:10px; font-weight:700; margin: 4px 10px 18px; color: var(--text); }
+    .logo .dot { width:10px; height:10px; background: var(--primary); border-radius:50%; box-shadow: 0 0 12px rgba(34,197,94,.8); }
+    .nav { list-style:none; margin: 12px 0 0; padding:0; }
+    .nav a { display:flex; align-items:center; gap:10px; padding:10px 12px; margin:6px 4px; color: var(--muted); text-decoration:none; border-radius:8px; border:1px solid transparent; }
+    .nav a:hover { background:#0f1a2b; border-color:#13223a; color:#cbd5e1; }
+    .nav a.active { background: rgba(56,189,248,.08); border-color:#0ea5e9; color:#e0f2fe; }
+    .content { padding: 28px; }
+    .header { display:flex; justify-content: space-between; align-items:center; margin-bottom: 18px; }
+    .header h1 { font-size: 20px; margin:0; }
+    .grid { display:grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+    .card { grid-column: span 12; background: var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; }
+    @media(min-width: 900px){ .card.h6 { grid-column: span 6; } }
+    @media(min-width: 1200px){ .card.h4 { grid-column: span 4; } }
+    .card h2 { font-size: 16px; margin: 0 0 8px; display:flex; align-items:center; gap:8px; }
+    .desc { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+    .row { display:flex; gap:12px; align-items:center; margin: 10px 0; flex-wrap: wrap; }
+    label { font-size: 13px; color: #cbd5e1; min-width: 140px; }
+    input[type="text"], input[type="password"], input[type="tel"], input[type="url"], textarea, select { flex: 1; min-width: 220px; padding:10px 12px; background:#0b1220; color:var(--text); border:1px solid #1e293b; border-radius:8px; outline:none; }
+    input:focus, textarea:focus, select:focus { border-color:#38bdf8; box-shadow: 0 0 0 3px rgba(56,189,248,.15); }
+    .btn { padding:10px 14px; border-radius:8px; border:1px solid #1e293b; background:#0b1220; color:#e2e8f0; cursor:pointer; }
+    .btn.primary { background: linear-gradient(135deg, #22c55e, #16a34a); border-color: #16a34a; color: #062b16; font-weight:600; }
+    .btn.ghost { background: transparent; }
+    .status { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid #11324a; background:#0a1726; font-size:12px; color:#93c5fd; }
+    .status .dot { width:8px; height:8px; border-radius:50%; }
+    .ok { background: #22c55e; box-shadow:0 0 10px rgba(34,197,94,.7); }
+    .warn { background: #f59e0b; }
+    .bad { background: #ef4444; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { text-align:left; padding:10px 8px; border-bottom:1px solid #1f2937; font-size: 14px; }
+    th { color:#cbd5e1; font-weight:600; }
+    .pill { padding:4px 8px; border-radius:999px; font-size:12px; border:1px solid #1e293b; background:#0b1220; color:#cbd5e1; }
+    .switch { position: relative; width: 42px; height: 24px; background:#0b1220; border:1px solid #1f2937; border-radius: 999px; cursor: pointer; }
+    .switch input { display:none; }
+    .switch span { position:absolute; top:2px; left:2px; width:20px; height:20px; background:#334155; border-radius:50%; transition: all .2s; }
+    .switch input:checked + span { left:20px; background:#22c55e; }
+    .help { color:#94a3b8; font-size:12px; margin-top:6px; }
+    .hr { height:1px; background:#1f2937; margin: 12px 0; border:0; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="logo"><span class="dot"></span> Admin Console</div>
+      <nav>
+        <ul class="nav">
+          <li><a href="/plan-b/dashboard.html">Dashboard</a></li>
+          <li><a class="active" href="#">Settings</a></li>
+          <li><a href="/plan-b/reports.html">Reports</a></li>
+          <li><a href="/plan-b/logs.html">Logs</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <div class="header">
+        <h1>System Settings</h1>
+        <div class="row">
+          <button class="btn ghost" onclick="location.reload()">Reload</button>
+          <button class="btn primary" id="saveAll">Save All</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <section class="card h6" id="como-api">
+          <h2>Como API Configuration</h2>
+          <p class="desc">Configure API access used for loyalty and CRM integrations.</p>
+          <div class="row">
+            <label for="comoKey">API Key</label>
+            <input type="password" id="comoKey" placeholder="sk_live_****************" />
+          </div>
+          <div class="row">
+            <label for="comoBase">Base URL</label>
+            <input type="url" id="comoBase" placeholder="https://api.como.com/v1" />
+          </div>
+          <div class="row">
+            <label>Status</label>
+            <div class="status" id="comoStatus"><span class="dot bad"></span><span>Disconnected</span></div>
+            <button class="btn" id="testComo">Test Connection</button>
+          </div>
+          <p class="help">Your API key is stored securely on the server and never exposed to clients.</p>
+        </section>
+
+        <section class="card h6" id="whatsapp">
+          <h2>WhatsApp Integration</h2>
+          <p class="desc">Send order notifications and marketing messages via WhatsApp.</p>
+          <div class="row">
+            <label for="waNumber">Phone number</label>
+            <input type="tel" id="waNumber" placeholder="62812xxxxxxx" />
+          </div>
+          <div class="row">
+            <label for="waTemplate">Message template</label>
+            <textarea id="waTemplate" rows="3" placeholder="Hi {{name}}, your order {{order_id}} is confirmed."></textarea>
+          </div>
+          <div class="row">
+            <label>Sandbox</label>
+            <label class="switch"><input type="checkbox" id="waSandbox"><span></span></label>
+          </div>
+          <div class="row">
+            <button class="btn" id="sendTestWA">Send Test</button>
+            <button class="btn primary">Save WhatsApp Settings</button>
+          </div>
+        </section>
+
+        <section class="card h6" id="sheets">
+          <h2>Google Sheets Sync</h2>
+          <p class="desc">Configure syncing of orders, customers, and inventory to a Google Sheet.</p>
+          <div class="row">
+            <label for="gsheetId">Spreadsheet ID</label>
+            <input type="text" id="gsheetId" placeholder="1A2B3C..." />
+          </div>
+          <div class="row">
+            <label for="gsheetTab">Default tab</label>
+            <input type="text" id="gsheetTab" placeholder="Orders" />
+          </div>
+          <div class="row">
+            <label>Auto Sync</label>
+            <label class="switch"><input type="checkbox" id="gsAuto"><span></span></label>
+            <select id="gsInterval" style="max-width:200px">
+              <option value="5">Every 5 min</option>
+              <option value="15" selected>Every 15 min</option>
+              <option value="60">Every hour</option>
+            </select>
+          </div>
+          <div class="row">
+            <button class="btn" id="runSync">Run Sync Now</button>
+          </div>
+        </section>
+
+        <section class="card" id="users">
+          <h2>User Management</h2>
+          <p class="desc">Manage access, roles, and status of team members.</p>
+          <div class="row">
+            <button class="btn">Invite User</button>
+            <select id="roleFilter" style="max-width:200px">
+              <option value="all" selected>All roles</option>
+              <option value="admin">Admin</option>
+              <option value="manager">Manager</option>
+              <option value="staff">Staff</option>
+            </select>
+          </div>
+          <div class="hr"></div>
+          <table>
+            <thead>
+              <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="userTable">
+              <tr>
+                <td>Jane Doe</td>
+                <td>jane@example.com</td>
+                <td><span class="pill">Admin</span></td>
+                <td><span class="pill">Active</span></td>
+                <td>
+                  <button class="btn">Reset</button>
+                  <button class="btn">Disable</button>
+                </td>
+              </tr>
+              <tr>
+                <td>John Smith</td>
+                <td>john@example.com</td>
+                <td><span class="pill">Staff</span></td>
+                <td><span class="pill">Invited</span></td>
+                <td>
+                  <button class="btn">Resend</button>
+                  <button class="btn">Remove</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="card h6" id="notifications">
+          <h2>Notification Preferences</h2>
+          <p class="desc">Choose which events trigger notifications and how they are delivered.</p>
+          <div class="row"><label>New Orders</label><label class="switch"><input type="checkbox" checked id="nOrders"><span></span></label></div>
+          <div class="row"><label>Low Stock</label><label class="switch"><input type="checkbox" checked id="nStock"><span></span></label></div>
+          <div class="row"><label>Failed Payments</label><label class="switch"><input type="checkbox" id="nPayments"><span></span></label></div>
+          <div class="row"><label>WhatsApp Alerts</label><label class="switch"><input type="checkbox" id="nWA"><span></span></label></div>
+          <div class="row">
+            <label for="notifyEmail">Email</label>
+            <input type="text" id="notifyEmail" placeholder="alerts@example.com" />
+          </div>
+          <div class="row">
+            <label for="notifyWebhook">Webhook URL</label>
+            <input type="url" id="notifyWebhook" placeholder="https://hooks.example.com/notify" />
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const qs = (s) => document.querySelector(s);
+    const statusEl = qs('#comoStatus');
+    qs('#testComo')?.addEventListener('click', () => {
+      statusEl.innerHTML = '<span class="dot ok"></span><span>Connected</span>';
+    });
+    qs('#runSync')?.addEventListener('click', () => {
+      const btn = qs('#runSync');
+      const prev = btn.textContent; btn.textContent = 'Syncing...';
+      setTimeout(()=>{ btn.textContent = 'Run Sync Now'; alert('Sync completed'); }, 900);
+    });
+    qs('#sendTestWA')?.addEventListener('click', () => alert('Test WhatsApp message sent (mock)'));
+    qs('#saveAll')?.addEventListener('click', () => alert('All settings saved (mock)'));
+  </script>
+</body>
+</html>
