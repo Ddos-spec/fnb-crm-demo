@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expenses - Plan B Hybrid Integration</title>
+    <style>
+        :root {
+            --color-primary: #2563eb;
+            --color-primary-hover: #1d4ed8;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+            --color-background: #f8fafc;
+            --color-surface: #ffffff;
+            --color-text: #1e293b;
+            --color-text-secondary: #64748b;
+            --color-border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--color-background);
+            color: var(--color-text);
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 260px;
+            height: 100vh;
+            background: white;
+            border-right: 1px solid var(--color-border);
+            padding: 24px 0;
+            z-index: 100;
+        }
+
+        .logo {
+            padding: 0 24px 24px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background: var(--color-background);
+            color: var(--color-primary);
+        }
+
+        .nav-item.active {
+            background: #eff6ff;
+            color: var(--color-primary);
+            border-right: 3px solid var(--color-primary);
+            font-weight: 600;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 32px;
+        }
+
+        .header {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.75rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-error);
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .expense-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .expense-table th {
+            text-align: left;
+            padding: 12px;
+            background: var(--color-background);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .expense-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid var(--color-border);
+            font-size: 0.875rem;
+        }
+
+        .expense-table tr:hover {
+            background: var(--color-background);
+        }
+
+        .category-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .category-gas { background: #fef3c7; color: #92400e; }
+        .category-minyak { background: #fed7aa; color: #9a3412; }
+        .category-sayur { background: #d1fae5; color: #065f46; }
+        .category-daging { background: #fee2e2; color: #991b1b; }
+        .category-operasional { background: #e0e7ff; color: #3730a3; }
+
+        .receipt-link {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .receipt-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .sidebar .logo span:last-child,
+            .sidebar .nav-item span:last-child {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                padding: 16px;
+            }
+
+            .expense-table {
+                font-size: 0.75rem;
+            }
+
+            .expense-table th,
+            .expense-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <span>🍽️</span>
+            <span>FnB CRM</span>
+        </div>
+        <ul class="nav-menu">
+            <a href="dashboard.html" class="nav-item">
+                <span>📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="sales-como.html" class="nav-item">
+                <span>💰</span>
+                <span>Sales (Como)</span>
+            </a>
+            <a href="expenses.html" class="nav-item active">
+                <span>🛒</span>
+                <span>Expenses</span>
+            </a>
+            <a href="upload-struk.html" class="nav-item">
+                <span>📸</span>
+                <span>Upload Struk</span>
+            </a>
+            <a href="reports.html" class="nav-item">
+                <span>📈</span>
+                <span>Reports</span>
+            </a>
+            <a href="settings.html" class="nav-item">
+                <span>⚙️</span>
+                <span>Settings</span>
+            </a>
+        </ul>
+        <div style="position: absolute; bottom: 24px; left: 24px; right: 24px;">
+            <a href="../index.html" class="btn btn-primary" style="width: 100%; text-align: center;">← Back to Home</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>Expense Tracking</h1>
+                <p style="color: var(--color-text-secondary); margin-top: 8px;">Monitor pengeluaran operasional harian</p>
+            </div>
+            <a href="upload-struk.html" class="btn btn-primary">+ Upload Struk</a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Gas 12kg</div>
+                <div class="stat-value">Rp 300.000</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Minyak Goreng</div>
+                <div class="stat-value">Rp 180.000</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Sayur & Bumbu</div>
+                <div class="stat-value">Rp 450.000</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Ayam & Daging</div>
+                <div class="stat-value">Rp 300.000</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Hari Ini</div>
+                <div class="stat-value">Rp 1.230.000</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Daftar Pengeluaran</div>
+            
+            <div class="filters">
+                <select class="filter-select">
+                    <option>Hari Ini</option>
+                    <option>Minggu Ini</option>
+                    <option>Bulan Ini</option>
+                    <option>Custom Range</option>
+                </select>
+                <select class="filter-select">
+                    <option>Semua Kategori</option>
+                    <option>Gas</option>
+                    <option>Minyak</option>
+                    <option>Sayur & Bumbu</option>
+                    <option>Ayam & Daging</option>
+                    <option>Operasional</option>
+                </select>
+                <select class="filter-select">
+                    <option>Semua Supplier</option>
+                    <option>Toko Sumber Rejeki</option>
+                    <option>Pasar Induk</option>
+                    <option>CV Maju Jaya</option>
+                </select>
+            </div>
+
+            <table class="expense-table">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Kategori</th>
+                        <th>Keterangan</th>
+                        <th>Supplier</th>
+                        <th>Jumlah</th>
+                        <th>Struk</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>01 Nov 2025<br><small style="color: #64748b;">09:15 WIB</small></td>
+                        <td><span class="category-badge category-gas">Gas</span></td>
+                        <td>Gas 12kg x2</td>
+                        <td>Toko Sumber Rejeki</td>
+                        <td style="font-weight: 700; color: #ef4444;">Rp 300.000</td>
+                        <td><a href="#" class="receipt-link">📄 Lihat</a></td>
+                    </tr>
+                    <tr>
+                        <td>01 Nov 2025<br><small style="color: #64748b;">08:30 WIB</small></td>
+                        <td><span class="category-badge category-minyak">Minyak</span></td>
+                        <td>Minyak Goreng 2L x3</td>
+                        <td>Pasar Induk</td>
+                        <td style="font-weight: 700; color: #ef4444;">Rp 180.000</td>
+                        <td><a href="#" class="receipt-link">📄 Lihat</a></td>
+                    </tr>
+                    <tr>
+                        <td>01 Nov 2025<br><small style="color: #64748b;">08:00 WIB</small></td>
+                        <td><span class="category-badge category-sayur">Sayur</span></td>
+                        <td>Sayuran & Bumbu Dapur</td>
+                        <td>Pasar Induk</td>
+                        <td style="font-weight: 700; color: #ef4444;">Rp 450.000</td>
+                        <td><a href="#" class="receipt-link">📄 Lihat</a></td>
+                    </tr>
+                    <tr>
+                        <td>01 Nov 2025<br><small style="color: #64748b;">07:45 WIB</small></td>
+                        <td><span class="category-badge category-daging">Daging</span></td>
+                        <td>Ayam Potong 5kg, Daging Sapi 3kg</td>
+                        <td>CV Maju Jaya</td>
+                        <td style="font-weight: 700; color: #ef4444;">Rp 300.000</td>
+                        <td><a href="#" class="receipt-link">📄 Lihat</a></td>
+                    </tr>
+                    <tr>
+                        <td>31 Okt 2025<br><small style="color: #64748b;">16:20 WIB</small></td>
+                        <td><span class="category-badge category-operasional">Operasional</span></td>
+                        <td>Tissue, Sabun Cuci Piring</td>
+                        <td>Toko Sumber Rejeki</td>
+                        <td style="font-weight: 700; color: #ef4444;">Rp 85.000</td>
+                        <td><a href="#" class="receipt-link">📄 Lihat</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
